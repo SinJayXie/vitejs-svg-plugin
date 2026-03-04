@@ -1,0 +1,41 @@
+{
+  "name": "vitejs-svg-plugin",
+  "version": "1.0.3",
+  "type": "module",
+  "main": "dist/vitejs-svg-plugin.js",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "README.md",
+    "index.d.ts"
+  ],
+  "keywords": [
+    "svgo",
+    "svg-loader",
+    "vite",
+    "vitejs-svg-plugin"
+  ],
+  "license": "MIT",
+  "types": "./index.d.ts",
+  "module": "./dist/vitejs-svg-plugin.js",
+  "author": "",
+  "description": "",
+  "peerDependencies": {
+    "vite": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.3",
+    "eslint": "^10.0.2",
+    "globals": "^17.4.0",
+    "jiti": "^2.6.1",
+    "svgo": "^4.0.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}
