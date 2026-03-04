@@ -7,19 +7,29 @@ import { getTemplate, getTemplateText } from './template.js'
 export interface SvgLoaderPluginOptions {
     path: string,
     prefix?: string,
-    output?: string
+    output?: string,
+    css?: boolean
 }
 
 export interface SvgLoaderPluginApi {
     name: string
 }
 
-const getAllSvgAssets = function(filePath: string, prefix: string): Map<string, string> {
+const getCss = function(icons: Map<string, string>, prefix: string) {
+  const css: string[] = []
+  icons.forEach((icon, key) => {
+    css.push(`.${prefix}-${key}{--SVG-ICON:url('${icon}');-webkit-mask:var(--SVG-ICON) no-repeat;mask:var(--SVG-ICON) no-repeat;-webkit-mask-size:100% 100%;mask-size:100% 100%;background-color:currentColor;color:inherit;}`)
+  })
+  return css.join('\n')
+}
+
+const getAllSvgAssets = function(filePath: string, prefix: string, css?: boolean): Map<string, string> {
   const map = new Map<string, string>()
   if (fs.existsSync(filePath)) {
     fs.readdirSync(filePath).filter(file => file.endsWith('.svg')).forEach(file => {
       const basename = path.basename(file, '.svg')
       const svg = optimize(fs.readFileSync(path.resolve(filePath, file)).toString(), {
+        ...(css ? { datauri: 'enc' } : {}),
         plugins: [
           'removeEmptyAttrs',
           {
@@ -36,7 +46,10 @@ const getAllSvgAssets = function(filePath: string, prefix: string): Map<string, 
           }
         ]
       })
-      map.set(basename, svg.data.replace('<svg', '<symbol').replace('</svg>', '</symbol>'))
+      const finalSvg = css
+        ? svg.data // css 模式直接用 dataURI
+        : svg.data.replace('<svg', '<symbol').replace('</svg>', '</symbol>')
+      map.set(basename, finalSvg)
     })
   }
   return map
@@ -46,11 +59,12 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
   const options: SvgLoaderPluginOptions = Object.assign({
     path: '',
     prefix: 'icon',
+    css: false,
     output: null
   }, option)
 
-  const svgMap = getAllSvgAssets(path.resolve(process.cwd(), options.path), options.prefix!)
-  const virtualModuleId = 'virtual:svg-loader'
+  const svgMap = getAllSvgAssets(path.resolve(process.cwd(), options.path), options.prefix!, option.css)
+  const virtualModuleId = 'virtual:svg-loader' + (options.css ? '.css' : '')
   const resolvedVirtualModuleId = '\0' + virtualModuleId
   const entryTest = /src\/main.(js|ts)$/
 
@@ -81,7 +95,7 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
             }
           })
         }
-        return getTemplate().replace('[#SVG_DATA#]', JSON.stringify(svgRecord))
+        return !options.css ? getTemplate().replace('[#SVG_DATA#]', JSON.stringify(svgRecord)) : getCss(svgMap, options.prefix!)
       }
     },
     transform(code, id) {

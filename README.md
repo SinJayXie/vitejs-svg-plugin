@@ -14,6 +14,7 @@ A Vite plugin that automatically loads, optimizes, and registers SVG files as in
 - ✅ Removes width/height attributes for flexible sizing
 - ✅ Registers SVGs as inline symbols in the DOM for efficient rendering
 - ✅ Generates TypeScript type definitions for SVG icon names
+- ✅ Supports CSS mode for using SVGs as CSS background images
 - ✅ Supports manual chunking for better code splitting
 - ✅ Works seamlessly with Vite 3, 4, 5, and 6+
 
@@ -59,6 +60,7 @@ export default defineConfig({
     createSvgLoader({
       path: 'src/assets/svg',
       prefix: 'icon', // Default: 'icon'
+      css: false, // Default: false
       output: 'src/types/svg-icons.d.ts'
     })
   ]
@@ -69,14 +71,17 @@ export default defineConfig({
 
 The plugin automatically injects the SVG loader into your entry file (`src/main.js` or `src/main.ts`). You can use SVG icons in your components:
 
+**Vue:**
+
 ```vue
 <template>
   <svg class="icon">
     <use :xlink:href="'#icon_home'" />
   </svg>
 </template>
+```
 
-Or in React:
+**React:**
 
 ```tsx
 const Icon = ({ name }: { name: string }) => (
@@ -109,6 +114,36 @@ The prefix to use for SVG symbol IDs. This helps avoid ID conflicts when multipl
 prefix: 'my-icon' // Results in IDs like: my-icon_home, my-icon_user
 ```
 
+### `css` (optional)
+
+Type: `boolean`  
+Default: `false`
+
+Enable CSS mode to use SVGs as CSS background images. When enabled, the plugin generates CSS variables with data URIs instead of SVG symbols.
+
+```typescript
+css: true
+```
+
+**CSS Mode Usage:**
+
+```css
+.icon-home {
+  ...
+}
+
+.icon-user {
+  ...
+}
+```
+
+```vue
+<template>
+  <div class="icon-home"></div>
+  <div class="icon-user"></div>
+</template>
+```
+
 ### `output` (optional)
 
 Type: `string`
@@ -133,6 +168,8 @@ export type SvgIconNames = 'home' | 'user' | 'settings' | string;
 
 ## How It Works
 
+### Default Mode (SVG Symbols)
+
 1. **Scan**: The plugin scans the specified directory for all `.svg` files
 2. **Optimize**: Each SVG is optimized using SVGO with plugins:
    - `removeEmptyAttrs`: Removes empty attributes
@@ -141,6 +178,15 @@ export type SvgIconNames = 'home' | 'user' | 'settings' | string;
 3. **Convert**: SVG elements are converted to `<symbol>` elements
 4. **Register**: Symbols are injected into the DOM as a hidden SVG container
 5. **Use**: You can reference any SVG using `<use xlink:href="#prefix_name" />`
+
+### CSS Mode
+
+When `css: true` is enabled:
+
+1. **Scan**: The plugin scans the specified directory for all `.svg` files
+2. **Optimize**: Each SVG is optimized using SVGO with `datauri: 'enc'` for base64 encoding
+3. **Generate CSS**: Creates CSS classes with data URIs as background images
+4. **Use**: Apply CSS classes to elements to display SVG icons
 
 ## Example Project Structure
 

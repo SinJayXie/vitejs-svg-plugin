@@ -12,6 +12,7 @@ declare interface SvgLoaderPluginOptions {
     path: string;
     prefix?: string;
     output?: string;
+    css?: boolean;
 }
 
 export { }
