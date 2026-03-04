@@ -1,6 +1,6 @@
 {
   "name": "vitejs-svg-plugin",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "main": "dist/vitejs-svg-plugin.js",
   "scripts": {
