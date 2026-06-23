@@ -66,7 +66,7 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
   const svgMap = getAllSvgAssets(path.resolve(process.cwd(), options.path), options.prefix!, option.css)
   const virtualModuleId = 'virtual:svg-loader' + (options.css ? '.css' : '')
   const resolvedVirtualModuleId = '\0' + virtualModuleId
-  const entryTest = /src\/main.(js|ts)$/
+  const entryTest = /(src|example)\/main\.(js|ts)$/
 
   return {
     name: 'SvgLoaderPlugin',
@@ -94,7 +94,7 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
             if (err) {
               console.error(err)
             } else {
-              console.log(`Write ${option.output} success`)
+              console.log(`[SvgPlugins]: Write ${option.output} success`)
             }
           })
         }
