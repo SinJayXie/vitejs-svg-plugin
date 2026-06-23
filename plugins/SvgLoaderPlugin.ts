@@ -5,14 +5,14 @@ import type { Plugin } from 'vite'
 import { getTemplate, getTemplateText } from './template.js'
 
 export interface SvgLoaderPluginOptions {
-    path: string,
-    prefix?: string,
-    output?: string,
-    css?: boolean
+  path: string,
+  prefix?: string,
+  output?: string,
+  css?: boolean
 }
 
 export interface SvgLoaderPluginApi {
-    name: string
+  name: string
 }
 
 const getCss = function(icons: Map<string, string>, prefix: string) {
@@ -66,12 +66,13 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
   const svgMap = getAllSvgAssets(path.resolve(process.cwd(), options.path), options.prefix!, option.css)
   const virtualModuleId = 'virtual:svg-loader' + (options.css ? '.css' : '')
   const resolvedVirtualModuleId = '\0' + virtualModuleId
-  const entryTest = /(src|example)\/main\.(js|ts)$/
+  const entryTest = /(src|example)\/main\.(js|ts|jsx|tsx)$/
 
   return {
     name: 'SvgLoaderPlugin',
     outputOptions(output) {
       const userManualChunks = output.manualChunks
+      console.log(userManualChunks)
       output.manualChunks = (id, meta) => {
         if (id === resolvedVirtualModuleId) return 'svg-icons'
         if (typeof userManualChunks === 'function') return userManualChunks(id, meta) as string | null
