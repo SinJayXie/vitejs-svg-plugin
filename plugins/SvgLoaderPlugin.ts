@@ -71,8 +71,11 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
   return {
     name: 'SvgLoaderPlugin',
     outputOptions(output) {
-      output.manualChunks = id => {
+      const userManualChunks = output.manualChunks
+      output.manualChunks = (id, meta) => {
         if (id === resolvedVirtualModuleId) return 'svg-icons'
+        if (typeof userManualChunks === 'function') return userManualChunks(id, meta) as string | null
+        if (typeof userManualChunks === 'object') return (userManualChunks[id] ?? null) as string | null
       }
       return output
     },
