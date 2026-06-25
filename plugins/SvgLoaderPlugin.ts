@@ -5,14 +5,14 @@ import type { Plugin } from 'vite'
 import { getTemplate, getTemplateText } from './template.js'
 
 export interface SvgLoaderPluginOptions {
-  path: string,
-  prefix?: string,
-  output?: string,
-  css?: boolean
+    path: string,
+    prefix?: string,
+    output?: string,
+    css?: boolean
 }
 
 export interface SvgLoaderPluginApi {
-  name: string
+    name: string
 }
 
 const getCss = function(icons: Map<string, string>, prefix: string) {
@@ -89,7 +89,6 @@ export const SvgLoaderPlugin = function(option: SvgLoaderPluginOptions): Plugin<
         if (option.output) {
           const icons = Array.from(svgMap.keys()).map(item => `'${item}'`)
           const result = getTemplateText().replace('#ICON_LIST#', icons.join(' | ') + ' | {} & string')
-            .replace('#date#', new Date().toLocaleString('en-US'))
             .replace('#amount#', String(icons.length))
           fs.writeFile(option.output, result, (err) => {
             if (err) {

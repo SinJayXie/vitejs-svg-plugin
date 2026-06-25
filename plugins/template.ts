@@ -3,7 +3,6 @@ export const getTemplate = () => `const icons=[#SVG_DATA#];const gSvg=document.c
 export const getTemplateText = () => `/**
  * Svg Icon names (vitejs-svg-plugin)
  * @author SinJay Xie
- * @date #date#
  * @description Load SVG amount: #amount#
  */
 export type SvgIconNames = #ICON_LIST#;
